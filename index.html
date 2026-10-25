@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Segmentasi Pelanggan Online Retail</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root{color-scheme:light dark;--c0:#0F4C5C;--c1:#E3A33B;
+--color-fg:#1E2427;--color-fg-muted:#5B6770;--color-bg:#F6F8F9;--color-panel:#FFFFFF;--color-border-line:#DDE5E8;--color-bad:#B42318;
+--cds-surface-popover:#FFFFFF;--cds-border:#DDE5E8;--cds-shadow-popover:0 6px 18px rgba(0,0,0,.12);--cds-text-secondary:#5B6770;
+--cds-chart-muted:#B9C7CB;--cds-chart-grid:#E7ECEE;--cds-chart-axis:#C9D3D6;--cds-chart-reference:#8A979D;
+--cds-radius:10px;--cds-pad-xs:4px;--cds-pad-sm:8px;--cds-pad-lg:20px;--cds-gap-xs:4px;--cds-gap-sm:8px;--cds-gap-md:16px;--cds-gap-lg:28px;
+--cds-font-size-caption:13px;--cds-font-size-body:16px;--cds-font-size-heading:17px;--cds-font-size-title:34px;--cds-font-weight-medium:600;--cds-dur-slow:.3s;
+--font-anthropic-sans:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;--font-anthropic-serif:Georgia,"Times New Roman",serif}
+@media (prefers-color-scheme:dark){:root{--c0:#5FB3C4;--c1:#F0B85A;--color-fg:#E8EEF0;--color-fg-muted:#A3B0B5;--color-bg:#12181B;--color-panel:#1B2327;--color-border-line:#2C373C;
+--cds-surface-popover:#222C30;--cds-border:#2C373C;--cds-text-secondary:#A3B0B5;--cds-chart-muted:#4A5A60;--cds-chart-grid:#263035;--cds-chart-axis:#3A474D;--cds-chart-reference:#7D8A90}}
+html,body{margin:0;background:var(--color-bg)}
+#dash-root{max-width:1200px;margin:0 auto;padding:32px 20px 48px;box-sizing:border-box}
+#dash-root .dash-skeleton{color:transparent}
+.sg-foot{font-family:var(--font-anthropic-sans);font-size:13px;color:var(--color-fg-muted);margin-top:32px}
+</style><script>
+window.DASH_DATA={"segmen": [{"Segmen": "Champions", "Pelanggan": "725", "Pct_Pelanggan": "0.1677", "Pct_Revenue": "0.6489", "Recency_median_hari": "7.0", "Frequency_median": "12.0", "Monetary_median_GBP": "3542.51", "Total_Revenue_GBP": "5380623.54"}, {"Segmen": "Loyal Customers", "Pelanggan": "1136", "Pct_Pelanggan": "0.2628", "Pct_Revenue": "0.231", "Recency_median_hari": "50.0", "Frequency_median": "5.0", "Monetary_median_GBP": "1339.43", "Total_Revenue_GBP": "1915238.6"}, {"Segmen": "New / Recent Customers", "Pelanggan": "881", "Pct_Pelanggan": "0.2038", "Pct_Revenue": "0.053", "Recency_median_hari": "19.0", "Frequency_median": "2.0", "Monetary_median_GBP": "427.93", "Total_Revenue_GBP": "439247.94"}, {"Segmen": "Hibernating / Lost", "Pelanggan": "1580", "Pct_Pelanggan": "0.3656", "Pct_Revenue": "0.0671", "Recency_median_hari": "177.0", "Frequency_median": "1.0", "Monetary_median_GBP": "293.78", "Total_Revenue_GBP": "556638.48"}], "revenue_bulanan": [{"Bulan": "2010-12-01", "Revenue_GBP": "552372.86", "Catatan": ""}, {"Bulan": "2011-01-01", "Revenue_GBP": "473731.9", "Catatan": ""}, {"Bulan": "2011-02-01", "Revenue_GBP": "435534.07", "Catatan": ""}, {"Bulan": "2011-03-01", "Revenue_GBP": "578576.21", "Catatan": ""}, {"Bulan": "2011-04-01", "Revenue_GBP": "425222.67", "Catatan": ""}, {"Bulan": "2011-05-01", "Revenue_GBP": "647011.67", "Catatan": ""}, {"Bulan": "2011-06-01", "Revenue_GBP": "606862.52", "Catatan": ""}, {"Bulan": "2011-07-01", "Revenue_GBP": "573112.32", "Catatan": ""}, {"Bulan": "2011-08-01", "Revenue_GBP": "615078.09", "Catatan": ""}, {"Bulan": "2011-09-01", "Revenue_GBP": "929356.23", "Catatan": ""}, {"Bulan": "2011-10-01", "Revenue_GBP": "973306.38", "Catatan": ""}, {"Bulan": "2011-11-01", "Revenue_GBP": "1126815.07", "Catatan": ""}, {"Bulan": "2011-12-01", "Revenue_GBP": "341539.43", "Catatan": "Data hanya 1-9 Des 2011"}], "pemilihan_k": [{"k": "2", "Silhouette_latih": "0.43", "Silhouette_uji": "0.43", "Davies_Bouldin": "0.9"}, {"k": "3", "Silhouette_latih": "0.34", "Silhouette_uji": "0.33", "Davies_Bouldin": "1.05"}, {"k": "4", "Silhouette_latih": "0.33", "Silhouette_uji": "0.33", "Davies_Bouldin": "1.02"}, {"k": "5", "Silhouette_latih": "0.31", "Silhouette_uji": "0.3", "Davies_Bouldin": "1.04"}, {"k": "6", "Silhouette_latih": "0.31", "Silhouette_uji": "0.29", "Davies_Bouldin": "1.01"}, {"k": "7", "Silhouette_latih": "0.3", "Silhouette_uji": "0.29", "Davies_Bouldin": "0.99"}, {"k": "8", "Silhouette_latih": "0.27", "Silhouette_uji": "0.26", "Davies_Bouldin": "1.01"}, {"k": "9", "Silhouette_latih": "0.27", "Silhouette_uji": "0.25", "Davies_Bouldin": "1.04"}, {"k": "10", "Silhouette_latih": "0.27", "Silhouette_uji": "0.26", "Davies_Bouldin": "1.04"}], "evaluasi": [{"Metrik": "Silhouette (train)", "Nilai": "0.3317", "Arti": "Kejelasan segmen pada data latih (0,25-0,5 = sedang)"}, {"Metrik": "Silhouette (test)", "Nilai": "0.3252", "Arti": "Kejelasan segmen pada data uji"}, {"Metrik": "Davies-Bouldin (train)", "Nilai": "1.0222", "Arti": "Pemisahan antar-cluster (lebih rendah lebih baik)"}, {"Metrik": "ARI stabilitas seed (rata-rata)", "Nilai": "0.9796", "Arti": "Kemiripan hasil antar random seed (1 = identik)"}, {"Metrik": "ARI bootstrap (rata-rata)", "Nilai": "0.8541", "Arti": "Kemiripan hasil saat data latih diacak ulang"}, {"Metrik": "Accuracy Decision Tree (test)", "Nilai": "0.8983", "Arti": "Akurasi Decision Tree pada data uji"}, {"Metrik": "F1-macro Decision Tree (test)", "Nilai": "0.8945", "Arti": "F1-macro Decision Tree pada data uji"}, {"Metrik": "Accuracy Random Forest (test)", "Nilai": "0.9838", "Arti": "Akurasi Random Forest pada data uji"}, {"Metrik": "F1-macro Random Forest (test)", "Nilai": "0.9834", "Arti": "F1-macro Random Forest pada data uji"}], "rekomendasi": [{"No": "1", "Program": "Retensi VIP berbasis layanan, bukan diskon", "Segmen": "Champions", "KPI": "90% tetap belanja dalam 60 hari; porsi revenue di atas 60%", "Prioritas": "Tinggi"}, {"No": "2", "Program": "Email otomatis hari ke-7, 21, 45 untuk pembelian ke-2 dan ke-3", "Segmen": "New / Recent Customers", "KPI": "Persentase naik ke Loyal dalam 90 hari", "Prioritas": "Tinggi"}, {"No": "3", "Program": "Win-back hemat dengan A/B test dan grup kontrol", "Segmen": "Hibernating / Lost", "KPI": "Reactivation dibanding grup kontrol; revenue minimal 3x biaya", "Prioritas": "Sedang"}, {"No": "4", "Program": "Segmentasi bulanan dan pemicu otomatis saat Recency lebih dari 50 hari", "Segmen": "Semua segmen", "KPI": "Respons ke pelanggan berisiko kurang dari 7 hari", "Prioritas": "Sedang"}]};
+(function(){
+  const calcs={}, listeners=[];
+  window.dash={
+    colors:['var(--c0)','var(--c1)','#3F8F8A','#9AA3A8','#B4521E','#5B6770','#7FA9B3','#C9D6D9'],
+    calc:(id,o)=>{calcs[id]=o;},
+    data:(id)=>{ if(DASH_DATA[id]) return {status:'ok',data:DASH_DATA[id]};
+      if(calcs[id]) return {status:'ok',data:calcs[id].fn(...calcs[id].inputs.map(i=>DASH_DATA[i]))};
+      return {status:'missing',data:[]}; },
+    onData:(fn)=>{listeners.push(fn); fn();}
+  };
+  let t; window.addEventListener('resize',()=>{clearTimeout(t); t=setTimeout(()=>listeners.forEach(f=>f()),150);});
+})();
+</script></head><body><div id="dash-root">
+<style>
+#dash-root .sg{font-family:var(--font-anthropic-sans);color:var(--color-fg);display:flex;flex-direction:column;gap:var(--cds-gap-lg)}
+#dash-root .sg-title{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);margin:0}
+#dash-root .sg-take{color:var(--color-fg-muted);font-size:var(--cds-font-size-body);margin:var(--cds-gap-xs) 0 0}
+#dash-root .sg-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr));gap:var(--cds-gap-md)}
+#dash-root .sg-tile,#dash-root .sg-card{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-lg)}
+#dash-root .sg-tile .lbl{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+#dash-root .sg-tile .val{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);font-variant-numeric:tabular-nums;margin-top:var(--cds-gap-xs);min-height:1.3em}
+#dash-root .sg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:var(--cds-gap-md)}
+#dash-root .sg-card h2{font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium);margin:0}
+#dash-root .sg-card .note{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);margin:var(--cds-gap-xs) 0 var(--cds-gap-md)}
+#dash-root .sg-chart{position:relative;min-height:260px}
+#dash-root .sg-tip{position:absolute;pointer-events:none;background:var(--cds-surface-popover);border:1px solid var(--cds-border);border-radius:var(--cds-radius);box-shadow:var(--cds-shadow-popover);padding:var(--cds-pad-xs) var(--cds-pad-sm);font-size:var(--cds-font-size-caption);opacity:0;white-space:nowrap;z-index:2}
+#dash-root .sg-tip .h{color:var(--cds-text-secondary)}
+#dash-root .sg-legend{display:flex;gap:var(--cds-gap-md);font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);margin-bottom:var(--cds-gap-sm)}
+#dash-root .sg-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+#dash-root .sg-tbl-wrap{overflow-x:auto}
+#dash-root table.sg-tbl{width:100%;border-collapse:collapse;font-size:var(--cds-font-size-caption);font-variant-numeric:tabular-nums}
+#dash-root table.sg-tbl th{text-align:left;color:var(--color-fg-muted);font-weight:var(--cds-font-weight-medium);border-bottom:1px solid var(--color-border-line);padding:var(--cds-pad-xs) var(--cds-pad-sm)}
+#dash-root table.sg-tbl td{border-bottom:1px solid var(--color-border-line);padding:var(--cds-pad-xs) var(--cds-pad-sm);vertical-align:top}
+#dash-root table.sg-tbl td.num,#dash-root table.sg-tbl th.num{text-align:right}
+#dash-root .sg-fail{display:flex;align-items:center;justify-content:center;gap:8px;min-height:260px;color:var(--color-fg-muted);font-size:var(--cds-font-size-caption)}
+#dash-root .sg-fail::before{content:"";width:.375rem;height:.375rem;border-radius:50%;background:var(--color-bad)}
+#dash-root [data-dash-source-state=empty]{color:transparent}
+#dash-root [data-dash-source-state=refreshing]{opacity:.5;transition:opacity var(--cds-dur-slow)}
+#dash-root .sg-section{font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium);margin:var(--cds-gap-sm) 0 0}
+</style>
+<div class="sg">
+  <header id="ringkasan">
+    <h1 class="sg-title">Segmentasi pelanggan Online Retail</h1>
+    <p class="sg-take">Champions, <span class="dash-skeleton" data-source="segmen" data-field="Pct_Pelanggan" data-where="Segmen=Champions" id="tk-cu">—</span> pelanggan, menghasilkan <span class="dash-skeleton" data-source="segmen" data-field="Pct_Revenue" data-where="Segmen=Champions" id="tk-rv">—</span> revenue. Prioritaskan retensi segmen ini di atas promosi massal.</p>
+  </header>
+  <div class="sg-tiles">
+    <div class="sg-tile"><div class="lbl">Pelanggan dianalisis (Des 2010 – Des 2011)</div><div class="val dash-skeleton" id="t-total" data-source="ringkasan" data-field="Total_Pelanggan" data-row="0">—</div></div>
+    <div class="sg-tile"><div class="lbl">Revenue dari Champions</div><div class="val dash-skeleton" id="t-champ" data-source="segmen" data-field="Pct_Revenue" data-where="Segmen=Champions">—</div></div>
+    <div class="sg-tile"><div class="lbl">Revenue dari Champions + Loyal</div><div class="val dash-skeleton" id="t-top2" data-source="ringkasan" data-field="Pct_Revenue_Champions_Loyal" data-row="0">—</div></div>
+    <div class="sg-tile"><div class="lbl">Pelanggan tidak aktif (Hibernating)</div><div class="val dash-skeleton" id="t-hib" data-source="segmen" data-field="Pct_Pelanggan" data-where="Segmen=Hibernating / Lost">—</div></div>
+    <div class="sg-tile"><div class="lbl">Silhouette score (data uji)</div><div class="val dash-skeleton" id="t-sil" data-source="evaluasi" data-field="Nilai" data-where="Metrik=Silhouette (test)">—</div></div>
+  </div>
+
+  <h2 class="sg-section" id="sec-segmen">Siapa pelanggan kita</h2>
+  <div class="sg-grid">
+    <section class="sg-card" id="c-share">
+      <h2>Porsi pelanggan vs porsi revenue</h2>
+      <p class="note">Empat segmen hasil K-Means (k = 4) pada 4.322 pelanggan aktif.</p>
+      <div class="sg-legend"><span><i style="background:var(--cds-chart-muted)"></i>% pelanggan</span><span><i id="lg-rv"></i>% revenue</span></div>
+      <div class="sg-chart dash-skeleton" id="ch-share" data-source="segmen"></div>
+    </section>
+    <section class="sg-card" id="c-profil">
+      <h2>Profil segmen (median)</h2>
+      <p class="note">Recency = hari sejak transaksi terakhir; Frequency = jumlah invoice; Monetary = total belanja bersih.</p>
+      <div class="sg-tbl-wrap"><table class="sg-tbl" id="tb-profil" data-source="segmen" data-row-key="Segmen"><thead><tr>
+        <th data-field="Segmen">Segmen</th><th class="num" data-field="Pelanggan">Pelanggan</th><th class="num" data-field="Recency_median_hari">Recency</th><th class="num" data-field="Frequency_median">Frequency</th><th class="num" data-field="Monetary_median_GBP">Monetary</th><th class="num" data-field="Total_Revenue_GBP">Total revenue</th>
+      </tr></thead><tbody></tbody></table></div>
+    </section>
+  </div>
+
+  <h2 class="sg-section" id="sec-data">Pola penjualan dan kualitas model</h2>
+  <div class="sg-grid">
+    <section class="sg-card" id="c-bulan">
+      <h2>Revenue bersih per bulan</h2>
+      <p class="note">Desember 2010 sampai Desember 2011, puncak di Q4 2011. Desember 2011 hanya berisi 1–9 Desember, bukan penurunan nyata.</p>
+      <div class="sg-chart dash-skeleton" id="ch-bulan" data-source="revenue_bulanan"></div>
+    </section>
+    <section class="sg-card" id="c-k">
+      <h2>Silhouette per jumlah cluster</h2>
+      <p class="note">k = 4 dipilih: setara k = 3 tetapi lebih mudah ditindaklanjuti. Latih dan uji hampir sama, model tidak overfit.</p>
+      <div class="sg-legend"><span><i id="lg-k1"></i>Data latih</span><span><i id="lg-k2"></i>Data uji</span></div>
+      <div class="sg-chart dash-skeleton" id="ch-k" data-source="pemilihan_k"></div>
+    </section>
+  </div>
+  <div class="sg-grid">
+    <section class="sg-card" id="c-eval">
+      <h2>Evaluasi model</h2>
+      <p class="note">Clustering: kualitas sedang tetapi stabil. Klasifikasi: mengukur konsistensi penempatan segmen, bukan prediksi masa depan.</p>
+      <div class="sg-tbl-wrap"><table class="sg-tbl" id="tb-eval" data-source="evaluasi" data-row-key="Metrik"><thead><tr>
+        <th data-field="Metrik">Metrik</th><th class="num" data-field="Nilai">Nilai</th><th data-field="Arti">Arti</th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section class="sg-card" id="c-rek">
+      <h2>Rekomendasi dan KPI</h2>
+      <p class="note">Target KPI adalah usulan awal; setiap program diuji dengan grup kontrol.</p>
+      <div class="sg-tbl-wrap"><table class="sg-tbl" id="tb-rek" data-source="rekomendasi" data-row-key="No"><thead><tr>
+        <th data-field="No">No</th><th data-field="Program">Program</th><th data-field="Segmen">Segmen</th><th data-field="KPI">KPI</th><th data-field="Prioritas">Prioritas</th></tr></thead><tbody></tbody></table></div>
+    </section>
+  </div>
+</div>
+<script>
+dash.calc('ringkasan', {
+  inputs: ['segmen'],
+  title: 'Ringkasan segmen',
+  description: 'Total pelanggan dan porsi revenue Champions + Loyal dari tabel segmen.',
+  fn: (segmen) => {
+    const n = (r, k) => Number(r[k]);
+    const top2 = segmen.filter(r => r.Segmen === 'Champions' || r.Segmen === 'Loyal Customers');
+    return [{
+      Total_Pelanggan: segmen.reduce((a, r) => a + n(r, 'Pelanggan'), 0),
+      Pct_Revenue_Champions_Loyal: top2.reduce((a, r) => a + n(r, 'Pct_Revenue'), 0)
+    }];
+  }
+});
+</script>
+<script>
+(function(){
+  const loc = d3.formatLocale({decimal: ',', thousands: '.', grouping: [3], currency: ['£', '']});
+  const fInt = loc.format(',d'), fPct = loc.format('.1%'), fGBP = loc.format('$,.0f'), fDec = loc.format('.2f'), fDec3 = loc.format('.3f');
+  const fMoneyShort = v => v >= 1e6 ? '£' + loc.format('.2f')(v / 1e6) + ' jt' : '£' + loc.format(',.0f')(v / 1e3) + ' rb';
+  const ORDER = ['Champions', 'Loyal Customers', 'New / Recent Customers', 'Hibernating / Lost'];
+  const SHORT = {'Champions': 'Champions', 'Loyal Customers': 'Loyal', 'New / Recent Customers': 'New / Recent', 'Hibernating / Lost': 'Hibernating'};
+  const C0 = dash.colors[0], C1 = dash.colors[1];
+  document.getElementById('lg-rv').style.background = C0;
+  document.getElementById('lg-k1').style.background = C0;
+  document.getElementById('lg-k2').style.background = C1;
+
+  function setVal(id, st, txt) { const el = document.getElementById(id); if (st === 'ok' || st === 'error' || st === 'connect') el.classList.remove('dash-skeleton'); el.textContent = st === 'ok' ? txt : '—'; }
+  function fail(el) { el.classList.remove('dash-skeleton'); el.innerHTML = ''; const d = document.createElement('div'); d.className = 'sg-fail'; d.textContent = 'Failed to load'; el.appendChild(d); }
+  function tipFor(box) { let t = box.querySelector('.sg-tip'); if (!t) { t = document.createElement('div'); t.className = 'sg-tip'; box.appendChild(t); } return t; }
+  function showTip(box, tip, ev, head, lines) {
+    tip.innerHTML = ''; const h = document.createElement('div'); h.className = 'h'; h.textContent = head; tip.appendChild(h);
+    lines.forEach(([col, name, val]) => { const r = document.createElement('div'); if (col) { const i = document.createElement('i'); i.style.cssText = 'display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;background:' + col; r.appendChild(i); } r.appendChild(document.createTextNode(name + ': ' + val)); tip.appendChild(r); });
+    const b = box.getBoundingClientRect(); let x = ev.clientX - b.left + 12, y = ev.clientY - b.top + 12;
+    tip.style.opacity = 1; const tw = tip.offsetWidth; if (x + tw > b.width) x = Math.max(0, ev.clientX - b.left - tw - 12);
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  const hideTip = tip => tip.style.opacity = 0;
+  function axisClean(g) { g.attr('font-size', null).attr('font-family', null); g.selectAll('text').style('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)'); g.selectAll('line,path').style('stroke', 'var(--cds-chart-axis)'); }
+  function measure(svg, texts) { const t = svg.append('text').style('font-size', 'var(--cds-font-size-caption)'); let m = 0; texts.forEach(s => { t.text(s); m = Math.max(m, t.node().getComputedTextLength()); }); t.remove(); return m; }
+
+  function drawShare(rows, st) {
+    const box = document.getElementById('ch-share');
+    if (st === 'error' || st === 'connect') return fail(box);
+    if (st !== 'ok') return;
+    box.classList.remove('dash-skeleton'); box.querySelectorAll('svg').forEach(s => s.remove());
+    const data = ORDER.map(s => rows.find(r => r.Segmen === s)).filter(Boolean);
+    const W = box.clientWidth || 400, H = 260;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`);
+    const lw = measure(svg, data.map(d => SHORT[d.Segmen])) + 10;
+    const vw = measure(svg, ['100,0%']) + 8;
+    const x = d3.scaleLinear([0, d3.max(data, d => Math.max(+d.Pct_Pelanggan, +d.Pct_Revenue))], [lw, W - vw]);
+    const y = d3.scaleBand(data.map(d => d.Segmen), [6, H - 6]).padding(0.28);
+    const bh = Math.min(16, y.bandwidth() / 2 - 2);
+    const tip = tipFor(box);
+    const g = svg.selectAll('g.row').data(data).join('g').attr('class', 'row').attr('transform', d => `translate(0,${y(d.Segmen)})`);
+    g.append('text').attr('x', lw - 10).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').attr('text-anchor', 'end').style('font-size', 'var(--cds-font-size-caption)').style('fill', 'var(--color-fg)').text(d => SHORT[d.Segmen]);
+    [['Pct_Pelanggan', 'var(--cds-chart-muted)', 0], ['Pct_Revenue', C0, 1]].forEach(([k, col, i]) => {
+      const yy = y.bandwidth() / 2 - bh - 1 + i * (bh + 2);
+      g.append('rect').attr('x', x(0)).attr('y', yy).attr('height', bh).attr('rx', 4).attr('width', d => Math.max(1, x(+d[k]) - x(0))).style('fill', col);
+      g.append('text').attr('x', d => x(+d[k]) + 4).attr('y', yy + bh / 2).attr('dy', '0.35em').style('font-size', 'var(--cds-font-size-caption)').style('fill', 'var(--color-fg-muted)').style('font-variant-numeric', 'tabular-nums').text(d => fPct(+d[k]));
+    });
+    g.append('rect').attr('x', 0).attr('y', 0).attr('width', W).attr('height', y.bandwidth()).style('fill', 'transparent')
+      .on('mousemove', (ev, d) => showTip(box, tip, ev, d.Segmen, [['var(--cds-chart-muted)', '% pelanggan', fPct(+d.Pct_Pelanggan)], [C0, '% revenue', fPct(+d.Pct_Revenue)], [null, 'Pelanggan', fInt(+d.Pelanggan)]]))
+      .on('mouseleave', () => hideTip(tip));
+  }
+
+  function drawProfil(rows, st, cols) {
+    const tb = document.querySelector('#tb-profil tbody'); tb.innerHTML = '';
+    if (st !== 'ok') return;
+    ORDER.map(s => rows.find(r => r.Segmen === s)).filter(Boolean).forEach(r => {
+      const tr = document.createElement('tr');
+      [[r.Segmen, ''], [fInt(+r.Pelanggan), 'num'], [fInt(+r.Recency_median_hari) + ' hari', 'num'], [fInt(+r.Frequency_median), 'num'], [fGBP(+r.Monetary_median_GBP), 'num'], [fGBP(+r.Total_Revenue_GBP), 'num']].forEach(([t, c]) => { const td = document.createElement('td'); td.textContent = t; if (c) td.className = c; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+  }
+
+  function drawBulan(rows, st) {
+    const box = document.getElementById('ch-bulan');
+    if (st === 'error' || st === 'connect') return fail(box);
+    if (st !== 'ok') return;
+    box.classList.remove('dash-skeleton'); box.querySelectorAll('svg').forEach(s => s.remove());
+    const data = rows.map(r => ({d: new Date(r.Bulan + 'T00:00:00Z'), v: +r.Revenue_GBP, note: r.Catatan}));
+    const W = box.clientWidth || 400, H = 260, mb = 24, mt = 8;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`);
+    const yMax = d3.max(data, d => d.v);
+    const y = d3.scaleLinear([0, yMax], [H - mb, mt]).nice();
+    const ml = measure(svg, y.ticks(4).map(fMoneyShort)) + 8;
+    const fM = d3.utcFormat('%b');
+    const x = d3.scaleBand(data.map(d => d.d), [ml, W - 4]).padding(0.25);
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', ml).attr('x2', W - 4).attr('y1', d => y(d)).attr('y2', d => y(d)).style('stroke', 'var(--cds-chart-grid)');
+    const ya = svg.append('g').attr('transform', `translate(${ml},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(fMoneyShort).tickSize(0)); axisClean(ya); ya.select('.domain').remove();
+    const step = W < 420 ? 2 : 1;
+    const xa = svg.append('g').attr('transform', `translate(0,${H - mb})`).call(d3.axisBottom(x).tickFormat((d, i) => i % step ? '' : fM(d)).tickSize(0)); axisClean(xa);
+    xa.selectAll('text').attr('dy', '1em');
+    const tip = tipFor(box);
+    svg.append('g').selectAll('rect').data(data).join('rect').attr('x', d => x(d.d)).attr('width', x.bandwidth()).attr('y', d => y(d.v)).attr('height', d => y(0) - y(d.v)).attr('rx', 4)
+      .style('fill', d => d.note ? 'var(--cds-chart-muted)' : C0)
+      .on('mousemove', (ev, d) => showTip(box, tip, ev, d3.utcFormat('%B %Y')(d.d), [[null, 'Revenue', fGBP(d.v)]].concat(d.note ? [[null, 'Catatan', d.note]] : [])))
+      .on('mouseleave', () => hideTip(tip));
+  }
+
+  function drawK(rows, st) {
+    const box = document.getElementById('ch-k');
+    if (st === 'error' || st === 'connect') return fail(box);
+    if (st !== 'ok') return;
+    box.classList.remove('dash-skeleton'); box.querySelectorAll('svg').forEach(s => s.remove());
+    const data = rows.map(r => ({k: +r.k, a: +r.Silhouette_latih, b: +r.Silhouette_uji, db: +r.Davies_Bouldin}));
+    const W = box.clientWidth || 400, H = 260, mb = 28, mt = 10;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`);
+    const y = d3.scaleLinear([0.2, 0.45], [H - mb, mt]);
+    const ml = measure(svg, y.ticks(5).map(fDec)) + 8;
+    const x = d3.scaleLinear(d3.extent(data, d => d.k), [ml + 6, W - 22]);
+    svg.append('g').selectAll('line').data(y.ticks(5)).join('line').attr('x1', ml).attr('x2', W - 4).attr('y1', d => y(d)).attr('y2', d => y(d)).style('stroke', 'var(--cds-chart-grid)');
+    const ya = svg.append('g').attr('transform', `translate(${ml},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(fDec).tickSize(0)); axisClean(ya); ya.select('.domain').remove();
+    const xa = svg.append('g').attr('transform', `translate(0,${H - mb})`).call(d3.axisBottom(x).ticks(data.length).tickFormat(d => 'k=' + d).tickSize(0)); axisClean(xa); xa.selectAll('text').attr('dy', '1em');
+    svg.append('line').attr('x1', x(4)).attr('x2', x(4)).attr('y1', mt).attr('y2', H - mb).style('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 3');
+    [['a', C0], ['b', C1]].forEach(([k, col]) => {
+      svg.append('path').datum(data).attr('d', d3.line().x(d => x(d.k)).y(d => y(d[k]))).style('fill', 'none').style('stroke', col).attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+      svg.append('g').selectAll('circle').data(data).join('circle').attr('cx', d => x(d.k)).attr('cy', d => y(d[k])).attr('r', 3).style('fill', col);
+    });
+    const tip = tipFor(box), bw = (x(3) - x(2));
+    svg.append('g').selectAll('rect').data(data).join('rect').attr('x', d => x(d.k) - bw / 2).attr('width', bw).attr('y', mt).attr('height', H - mb - mt).style('fill', 'transparent')
+      .on('mousemove', (ev, d) => showTip(box, tip, ev, 'k = ' + d.k, [[C0, 'Silhouette latih', fDec(d.a)], [C1, 'Silhouette uji', fDec(d.b)], [null, 'Davies-Bouldin', fDec(d.db)]]))
+      .on('mouseleave', () => hideTip(tip));
+  }
+
+  function fillTable(sel, rows, st, cells) {
+    const tb = document.querySelector(sel + ' tbody'); tb.innerHTML = '';
+    if (st !== 'ok') return;
+    rows.forEach(r => { const tr = document.createElement('tr'); cells(r).forEach(([t, c]) => { const td = document.createElement('td'); td.textContent = t; if (c) td.className = c; tr.appendChild(td); }); tb.appendChild(tr); });
+  }
+
+  dash.onData(() => {
+    const seg = dash.data('segmen'), ev = dash.data('evaluasi'), ring = dash.data('ringkasan'), bul = dash.data('revenue_bulanan'), kk = dash.data('pemilihan_k'), rek = dash.data('rekomendasi');
+    const segRow = s => (seg.data || []).find(r => r.Segmen === s) || {};
+    setVal('tk-cu', seg.status, fPct(+segRow('Champions').Pct_Pelanggan));
+    setVal('tk-rv', seg.status, fPct(+segRow('Champions').Pct_Revenue));
+    setVal('t-champ', seg.status, fPct(+segRow('Champions').Pct_Revenue));
+    setVal('t-hib', seg.status, fPct(+segRow('Hibernating / Lost').Pct_Pelanggan));
+    const r0 = (ring.data || [])[0] || {};
+    setVal('t-total', ring.status, fInt(+r0.Total_Pelanggan));
+    setVal('t-top2', ring.status, fPct(+r0.Pct_Revenue_Champions_Loyal));
+    const sil = (ev.data || []).find(r => r.Metrik === 'Silhouette (test)') || {};
+    setVal('t-sil', ev.status, fDec(+sil.Nilai));
+    drawShare(seg.data || [], seg.status);
+    drawProfil(seg.data || [], seg.status);
+    drawBulan(bul.data || [], bul.status);
+    drawK(kk.data || [], kk.status);
+    fillTable('#tb-eval', ev.data || [], ev.status, r => [[r.Metrik, ''], [fDec3(+r.Nilai), 'num'], [r.Arti, '']]);
+    fillTable('#tb-rek', rek.data || [], rek.status, r => [[r.No, ''], [r.Program, ''], [r.Segmen, ''], [r.KPI, ''], [r.Prioritas, '']]);
+  });
+})();
+</script>
+
+<p class="sg-foot">Sumber: Online Retail Dataset (UCI, Chen 2015). Analisis: Kelompok AiDP2, Universitas Cakrawala, 2026. Data agregat dari notebook Colab Anggota 1 dan Anggota 2.</p>
+</div></body></html>
