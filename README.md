@@ -2,7 +2,7 @@
 
 Dashboard ringkasan hasil analisis segmentasi pelanggan menggunakan RFM (Recency, Frequency, Monetary) dan K-Means clustering (k = 4) pada *Online Retail Dataset* (UCI Machine Learning Repository, Chen 2015).
 
-**Lihat dashboard:** kelompok-aidp2.github.io/Dashboard-Segmentasi-Pelanggan/
+**Lihat dashboard:** https://visesa123.github.io/Dashboard-Segmentasi-Pelanggan/
 
 ## Temuan utama
 - Champions (16,8% pelanggan) menyumbang 64,9% revenue.
